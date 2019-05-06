@@ -29,6 +29,19 @@ class Message {
         this.time = initliazeTime();
     }
 
+    Message(String msg, int id, String timestamp)
+    {
+        this.content = msg;
+        this.id = id;
+        this.time = timestamp;
+        updateIdcounter();
+    }
+
+    private void updateIdcounter() {
+        if (this.id > IdCounter)
+            this.IdCounter = this.id;
+    }
+
 
     private void setIdCounter() {
         IdCounter++;
