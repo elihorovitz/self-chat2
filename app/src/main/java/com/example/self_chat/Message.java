@@ -10,15 +10,6 @@ class Message {
     private int id;
     private String time;
 
-    static List<Message> getall()
-    {
-        ArrayList<Message> all = new ArrayList<>();
-        all.add(new Message("first"));
-        all.add(new Message("second"));
-        all.add(new Message("third"));
-
-        return all;
-    }
 
     final String content;
 
@@ -51,34 +42,35 @@ class Message {
 
 
     private String initliazeTime() {
-        long millis = System.currentTimeMillis();
-        Calendar c = Calendar.getInstance();
-        c.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        c.setTimeInMillis(millis);
-        int hours = c.get(Calendar.HOUR_OF_DAY);
-        int minutes = c.get(Calendar.MINUTE);
-        int seconds = c.get(Calendar.SECOND);
-        String minutesFormat, secondsFormat;
-        if (minutes < 10) {
-            minutesFormat = "0" + minutes;
-        }
-        else {
-            minutesFormat = String.valueOf(minutes);
-        }
-        if (seconds < 10) {
-            secondsFormat = "0" + seconds;
-        }
-        else {
-            secondsFormat = String.valueOf(seconds);
-        }
-        return String.format("%d:%s:%s", hours, minutesFormat, secondsFormat);
+        long millis = System.currentTimeMillis()/1000;
+//        Calendar c = Calendar.getInstance();
+//        c.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+//        c.setTimeInMillis(millis);
+//        int hours = c.get(Calendar.HOUR_OF_DAY);
+//        int minutes = c.get(Calendar.MINUTE);
+//        int seconds = c.get(Calendar.SECOND);
+//        String minutesFormat, secondsFormat;
+//        if (minutes < 10) {
+//            minutesFormat = "0" + minutes;
+//        }
+//        else {
+//            minutesFormat = String.valueOf(minutes);
+//        }
+//        if (seconds < 10) {
+//            secondsFormat = "0" + seconds;
+//        }
+//        else {
+//            secondsFormat = String.valueOf(seconds);
+//        }
+//        return String.format("%d:%s:%s", hours, minutesFormat, secondsFormat);
+        return String.valueOf(millis);
     }
 
-    public String getTime() {
+    String getTime() {
         return time;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 }

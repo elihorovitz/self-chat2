@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MessageRecyclerUtils {
+class MessageRecyclerUtils {
     static class MessageCallback
             extends DiffUtil.ItemCallback<Message> {
 
@@ -37,11 +37,11 @@ public class MessageRecyclerUtils {
     static class MessageAdapter
             extends ListAdapter<Message, MessageHolder> {
 
-        public MessageAdapter() {
+        MessageAdapter() {
             super(new MessageCallback());
         }
 
-        public MessageClickCallback callback;
+        MessageClickCallback callback;
 
         @NonNull @Override
         public MessageHolder onCreateViewHolder(@NonNull ViewGroup parent, int itemType) {
@@ -73,8 +73,8 @@ public class MessageRecyclerUtils {
     static class MessageHolder
             extends RecyclerView.ViewHolder {
 
-        public final TextView text;
-        public MessageHolder(@NonNull View itemView) {
+        final TextView text;
+        MessageHolder(@NonNull View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.msg_content);
         }
