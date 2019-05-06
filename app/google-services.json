@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "183103671895",
+    "firebase_url": "https://self-chat-cb1b0.firebaseio.com",
+    "project_id": "self-chat-cb1b0",
+    "storage_bucket": "self-chat-cb1b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183103671895:android:f0b2443752ef1d79",
+        "android_client_info": {
+          "package_name": "com.example.self_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183103671895-lpde9oek83064p4s234d1pq8sq2edsk7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzGp8xt4p9XfSu8X8grtvz8oVx8J3E7I4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "183103671895-lpde9oek83064p4s234d1pq8sq2edsk7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
