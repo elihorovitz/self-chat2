@@ -69,6 +69,9 @@ public class signup extends AppCompatActivity {
                         if (document.exists()) {
                             user = document.getData().get("name").toString();
                             Log.d("getUser", "DocumentSnapshot data: " + document.getData());
+                            editor = sp.edit();
+                            editor.putString(SIGNED, user);
+                            editor.apply();
                         } else {
                             Log.d("getUser", "No such document");
                         }
@@ -79,24 +82,20 @@ public class signup extends AppCompatActivity {
                 }
             });
         }
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        else{
+            countinue();
         }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     public void countinue(){
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Log.d("getUserTiming", "now=");
         if (user != "") {
-
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
             mainActivityIntent.putExtra(getString(R.string.username), user);
             startActivity(mainActivityIntent);
@@ -148,18 +147,18 @@ public class signup extends AppCompatActivity {
 //            return null;
 //        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.d("getUser", signup.this.user);
-//            signup.this.countinue();
-        }
-    }
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            Log.d("getUser", signup.this.user);
+////            signup.this.countinue();
+//        }
+//    }
 
 
 
