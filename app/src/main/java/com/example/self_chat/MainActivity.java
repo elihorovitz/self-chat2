@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -39,9 +41,9 @@ public class MainActivity extends AppCompatActivity
         implements MessageRecyclerUtils.MessageClickCallback {
     private static final String MSG_LIST = "message list";
     private static final String FIRETAG = "firebaseTag";
-
     private MessageRecyclerUtils.MessageAdapter adapter
             = new MessageRecyclerUtils.MessageAdapter();
+
     //todo room
     private ArrayList<Message> msgs = new ArrayList<>();
     private SharedPreferences sp;
@@ -54,18 +56,32 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        String userName = getIntent().getStringExtra(getString(R.string.username));
+        if (userName != null)
+        {
+            android.support.v7.widget.AppCompatTextView textView = findViewById(R.id.hi_user);
+            textView.setText(userName);
+            textView.setVisibility(View.VISIBLE);
+        }
         db = FirebaseFirestore.getInstance();
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sp.edit();
 //        downloadFromDB();
         new downloadFromFirebase().execute();
         RecyclerView recyclerView = findViewById(R.id.msg_recycler);
+        LinearLayoutManager ll= new LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, false);
+            ll.setStackFromEnd(true);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.VERTICAL, false));
-
+        recyclerView.setLayoutManager(ll);
         recyclerView.setAdapter(adapter);
+
         adapter.callback = this;
+
+
+
 
 
     }
@@ -147,10 +163,19 @@ public class MainActivity extends AppCompatActivity
 //        adapter.submitList(msgs);
     }
 
+    public void resetSp(View view) {
+        editor.clear().apply();
+    }
+
 
     private class downloadFromFirebase extends AsyncTask<Void, Void, Void> {
-//        private ArrayList<Message> msgsasync;// = new ArrayList<>();
+        private ProgressBar pb = findViewById(R.id.pBar);
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -171,7 +196,14 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     });
+            pb.setVisibility(View.INVISIBLE);
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
         }
     }
 
