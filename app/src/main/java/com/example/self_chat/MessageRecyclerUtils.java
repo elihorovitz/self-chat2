@@ -66,6 +66,9 @@ class MessageRecyclerUtils {
             Message message = getItem(position);
             msgHolder.text.setText(message.content);
         }
+
+
+
     }
 
 

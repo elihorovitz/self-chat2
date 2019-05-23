@@ -1,11 +1,16 @@
 package com.example.self_chat;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseFirestore db;
     private Gson gson = new Gson();
     private Message currMsg;
+    private final int MESSAGE_DETAILS = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +117,8 @@ public class MainActivity extends AppCompatActivity
                 Map<String, Object> messageObject = new HashMap<>();
                 messageObject.put("content", msg.content);
                 messageObject.put("time", msg.getTime());
+                messageObject.put("model", msg.getModel());
+                messageObject.put("manufacturer", msg.getManufacturer());
                 db.collection("messages")
                         .document(String.valueOf(msg.getId())).set(messageObject, SetOptions.merge());
             }
@@ -120,27 +129,60 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMessageClick(Message message) {
         currMsg = message;
-        new AlertDialog.Builder(this)
-                .setTitle("Positive?")
-                .setMessage("Are you sure?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        ArrayList<Message> msgsCopy = new ArrayList<>(MainActivity.this.msgs);
-                        msgsCopy.remove(MainActivity.this.currMsg);
-                        MainActivity.this.msgs = msgsCopy;
-                        editor.putString(MSG_LIST, gson.toJson(MainActivity.this.msgs));
-                        editor.apply();
-                        db.collection("messages").document(String.valueOf(MainActivity.this.currMsg.getId())).delete();
-//                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
-//                        reference.child(String.valueOf(MainActivity.this.currMsg.getId())).removeValue();
-                        MainActivity.this.adapter.submitList(MainActivity.this.msgs);
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
+        Intent message_details = new Intent(this, message_details.class);
+        message_details.putExtra(getString(R.string.message),  currMsg);
 
 
+        startActivityForResult(message_details,MESSAGE_DETAILS);
+
+//        new AlertDialog.Builder(this)
+//                .setTitle("Positive?")
+//                .setMessage("Are you sure?")
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                        ArrayList<Message> msgsCopy = new ArrayList<>(MainActivity.this.msgs);
+//                        msgsCopy.remove(MainActivity.this.currMsg);
+//                        MainActivity.this.msgs = msgsCopy;
+//                        editor.putString(MSG_LIST, gson.toJson(MainActivity.this.msgs));
+//                        editor.apply();
+//                        db.collection("messages").document(String.valueOf(MainActivity.this.currMsg.getId())).delete();
+////                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
+////                        reference.child(String.valueOf(MainActivity.this.currMsg.getId())).removeValue();
+//                        MainActivity.this.adapter.submitList(MainActivity.this.msgs);
+//                    }})
+//                .setNegativeButton(android.R.string.no, null).show();
+
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (MESSAGE_DETAILS) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    Message msg = (Message) data.getSerializableExtra(getString(R.string.message));
+                    ArrayList<Message> msgsCopy = new ArrayList<>(MainActivity.this.msgs);
+                    Log.d("msgsLen", String.valueOf(msgs.size()));
+                    for(Iterator<Message> iterator = msgsCopy.iterator(); iterator.hasNext(); ) {
+                        if(iterator.next().getId() == msg.getId())
+                            iterator.remove();
+                    }
+
+                    MainActivity.this.msgs = msgsCopy;
+                    Log.d("msgsLen", String.valueOf(msgs.size()));
+                    editor.putString(MSG_LIST, gson.toJson(MainActivity.this.msgs));
+                    editor.apply();
+                    db.collection("messages").document(String.valueOf(MainActivity.this.currMsg.getId())).delete();
+                    MainActivity.this.adapter.submitList(MainActivity.this.msgs);
+                }
+                break;
+            }
+        }
     }
 
 
@@ -169,12 +211,12 @@ public class MainActivity extends AppCompatActivity
 
 
     private class downloadFromFirebase extends AsyncTask<Void, Void, Void> {
-        private ProgressBar pb = findViewById(R.id.pBar);
+//        private ProgressBar pb = findViewById(R.id.pBar);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pb.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -188,7 +230,8 @@ public class MainActivity extends AppCompatActivity
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(FIRETAG, document.getId() + " => " + document.getData().get("content"));
 //                                Toast.makeText(MainActivity.this, document.getData().toString(), Toast.LENGTH_SHORT).show();
-                                    MainActivity.this.msgs.add(new Message(document.getData().get("content").toString(), Integer.parseInt(document.getId()), document.getData().get("time").toString()));
+                                    MainActivity.this.msgs.add(new Message(document.getData().get("content").toString(), Integer.parseInt(document.getId()), document.getData().get("time").toString()
+                                    ,document.getData().get("manufacturer").toString(), document.getData().get("model").toString()));
                                 }
                                 updateLocalDB(false);
                             } else {
@@ -196,7 +239,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     });
-            pb.setVisibility(View.INVISIBLE);
+//            pb.setVisibility(View.INVISIBLE);
             return null;
         }
 
